@@ -46,14 +46,13 @@ let user = prompt("Ingrese su nombre de usuario");
 let pass = prompt("Ingrese su contraseña para el ingreso");
 logged_in = CheckLogIn(user, pass);
 while(logged_in){
-    SeleccionAccion(prompt("Seleccione la opcion que desea realizar:\n 1.Ver sus fondos\n 2.Enviar fondos a otra dirección\n 3.Comprar un token\n 4.Salir/Log Off"));
-    InsertHtml();
+    SeleccionAccion(prompt("Seleccione la opcion que desea realizar:\n 1.Ver sus fondos\n 2.Enviar fondos a otra dirección\n 3.Graficar fondos\n 4.Salir/Log Off"));
 }
 
 // FUNCTIONS
 
 function Welcome(){
-    alert("Bienvenidos!!!");
+    alert("Bienvenidos!!!. Ingresar con user:admin y contraseña: pass");
 }
 
 function CrearUsuario(_userName, _password, _initialFunds = 0){ //FUNCION PARA CREAR USUARIOS
@@ -64,33 +63,6 @@ function CrearUsuario(_userName, _password, _initialFunds = 0){ //FUNCION PARA C
     } else {return false}
     
 }
-// ESTA PARTE DEL CODIGO SE DEJA COMENTADA SOLO EN ESTA ENTREGA.. LUEGO SE REMOVERA..
-// ESTA FUNCION ES REMPLAZADA POR LA QUE SE MUESTRA ABAJO, UTILIZANDO UNA DE ALTO NIVEL FILTER PARA OBTENER EL ARRAY CON EL USUARIO
-
-// function CheckLogIn(_user, _pass){ // LogIn requiere que el usuario se autentique para el ingreso
-//     for(let i = 0; i < users.length; i++){ //Check que el usuario este entre el array de usuarios
-//         if (users[i].userName === _user){
-//             activeUserId = i;
-//             userExists = true;
-//             break;
-//         } else{
-//             userExists = false;
-//         }
-//     }       
-//     if (userExists){ // Si existe en la base de datos, compara usuario y contraseña
-//         if (_user === users[activeUserId].userName &&_pass === users[activeUserId].password){
-//             alert("El ingreso ha sido exitoso Sr. " + _user);
-//             successfull = true;
-//         } else{
-//             alert("Ingreso denegado. El nombre de usuario o contraseña son erroneos");
-//             successfull = false;
-//         }
-//     } else {
-//         alert("Ingreso denegado. El nombre de usuario no existe");
-//         successfull = false;
-//     }   
-//     return successfull
-// }
 
 function CheckLogIn(_user, _pass){ //LogIn requiere que el usuario se autentique para el ingreso
     const isUser = users.filter((el)=> el.userName == _user); 
@@ -119,19 +91,19 @@ function SeleccionAccion(_seleccion){ // seleccionRed permite la seleccion de la
             TransferFunds(activeUserId);
             break;
         case "3":
-            alert("Opcion aun no implementada");
+            PrintAllFunds();
             break;
         case "4":
             logged_in = false;
             break;
         default: 
-            break;
+            logged_in = false;
     }
 }     
 
 function GetFunds(){ // obtiene valores de una API
     //estos valores se obtendran de apis en proximas entregas
-        alert("Usted posee " + users[activeUserId].funds + "ETH y " + weth.balanceOf(activeUserId) + "WETH");
+        alert("Usted posee " + users[activeUserId].funds + "ETH y " + weth.balanceOf(activeUserId) + "WETH");       
 }
 
 function TransferFunds(){ // pide los datos para trasnferencia de fondos
@@ -139,7 +111,7 @@ function TransferFunds(){ // pide los datos para trasnferencia de fondos
     posibleUsers = posibleUsers.filter(el => el != activeUserId);
     let transferTo = prompt("Seleccionar el ID del destinatario. Posible/s destinatarios:\n" + posibleUsers);
     if (posibleUsers.some(el => el == transferTo)){
-        let transferAmount = prompt("Seleccionar el monto a enviar (max:" + users[activeUserId].funds + "ETH)");
+        let transferAmount = parseFloat(prompt("Seleccionar el monto a enviar (max:" + users[activeUserId].funds + "ETH)"));
         if (transferAmount <= users[activeUserId].funds){
             TransferTo(activeUserId, transferTo, transferAmount);
             GetFunds();
@@ -151,11 +123,87 @@ function TransferFunds(){ // pide los datos para trasnferencia de fondos
     }
 }
 
-function TransferTo(_from, _to, _amount, _type = "ETH"){ //transfiere fondos
+function TransferTo(_from, _to, _amount, _type = "ETH"){ //Funcion que transfiere fondos
     users[_from].funds -= _amount;
     users[_to].funds += _amount;
 }
 
 function InsertHtml(){ // DOM - inyecta graficos y datos en el HTML
     // se completará mas adelante en proximas entregas  
+}
+
+function PrintAllFunds(){ // DOM - lista los fondos de todos los usuarios en una lista
+    let fundSection = document.getElementById("fundSection");
+    fundSection.innerHTML = "";
+    for (const user in users){
+        let parrafo = document.createElement("li");
+        parrafo.innerHTML = `${users[user].userName}: ${users[user].funds}`;
+        fundSection.appendChild(parrafo);
+    }
+    // Creacion de grafico de linea. Por el momento estático, proximas entregas se añadiran valores reales de fondos y se agregaràn mas graficos (ahora comentados)
+    //let chartElement = document.getElementById("myChart");
+    //chartElement.className = "w-100";
+    //drawFundsChart(["January", "February", "March", "April", "May", "June"], [0, 10, 5, 2, 20, 30, 45],"Grafico 1",chartElement);
+    // Creacion de grafico de torta. Por el momento estático, proximas entregas se añadirán valores reales de fondos
+    chartElement = document.getElementById("myChart");
+    chartElement.className = "w-100";
+    // Calculo de valores
+    let referencia = users.map((el)=> el.userName);
+    let valores = users.map((el)=> el.funds);
+    let valorTotal = valores.reduce((acumulador,el)=> acumulador + el,0);
+    valores = valores.map((el)=> el/valorTotal*100);
+
+    drawDoughnutChart(referencia, valores ,"Grafico 2", chartElement);
+    logged_in = false; //Desloguea para poder hacer el grafico
+}
+
+
+function drawFundsChart(_labels, _data, _title = "My First dataset", _element) {// Funcion grafico de linea.
+  //Definicion de datos
+  const data = {
+    labels: _labels,
+    datasets: [
+      {
+        label: _title,
+        backgroundColor: "rgb(255, 99, 132)",
+        borderColor: "rgb(255, 99, 132)",
+        data: _data,
+      },
+    ],
+  };
+  //Defincion de configuracion
+  const config = {
+    type: "line",
+    data: data,
+    options: {},
+  };
+  //Definicion de acciones
+  const myChart1 = new Chart(_element, config);
+  //myChart.destroy();
+}
+
+function drawDoughnutChart(_labels, _data, _title = "My First dataset", _element) {//Funcion grafico de donut. Necesaria las etiquetas, datos, titulo y elemento de HTML
+  const data = {
+    labels: _labels,
+    datasets: [
+      {
+        label: _title,
+        data: _data,
+        backgroundColor: [
+          "rgb(255, 99, 132)",
+          "rgb(54, 162, 235)",
+          "rgb(255, 205, 86)",
+        ],
+        hoverOffset: 4,
+      },
+    ],
+  };
+  const config = {
+    type: "doughnut",
+    data: data,
+    options: {
+        scale: 0.5,
+    },
+  };
+  const myChart2 = new Chart(_element, config);
 }
