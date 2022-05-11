@@ -1,9 +1,10 @@
-//Declaraciones
+//Declaraciones de Variables
 let logged_in = false;
 let network;
 let ticker;
 let user_funds;
 let activeUserId;
+let canvas;
 
 // DEFINICION DE CLASE ERC20, imitando los tokens en solidity
 // Y CREACION DEL CONTRATO ERC20 WETH.
@@ -40,20 +41,96 @@ const link = new ERC20("Chainlink", "LINK", 1000); // Será usado mas adelante
 CrearUsuario("user1", "pass1", 1); //Creo usuario 1, con fondos
 CrearUsuario("user2", "pass2", 0); //Creo usuario 2, sin fondos
 
+
+// LOGIN
+
+let loginForm = document.getElementById("loginFormID");
+let mainTitle = document.getElementById("mainTitleID");
+let mainText = document.getElementById("mainTextID");
+let sendForm = document.getElementById("sendFormID");
+
+
+loginForm.innerHTML = `<div class="mb-3">
+                        <label for="userName" class="form-label">Nombre de usuario</label>
+                        <input type="text" class="form-control" id="userName" aria-describedby="userHelp">
+                        <div id="userHelp" class="form-text">Nunca compartiremos tus datos.</div>
+                        </div>
+                        <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="password">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="loginButton">Log in</button>`;
+
+
+
+let userName = document.getElementById("userName");
+let password = document.getElementById("password");
+let loginButton = document.getElementById("loginButton");
+let sendButton="";
+loginButton.onclick = () => {
+    user = userName.value;
+    pass = password.value;
+    logged_in = CheckLogIn(user,pass);
+    if (logged_in){
+        LogIn();
+        
+    } else {
+     
+    }
+
+}
+
+// Prepara la pagina de usuario
+function LogIn(){
+    loginForm.innerHTML = "";
+    mainTitle.innerHTML = "Bienvenido Sr. " + user;
+    mainText.innerHTML = "Los fondos del sistema son los siguientes:";
+
+    let posibleUsers = users.map(el => el.id);
+
+    posibleUsers = posibleUsers.filter(el => el != activeUserId);
+
+    let userForm = `<div class="py-2 form-group">
+                    <label for="exampleFormControlSelect1">Seleccionar destinatario:</label>
+                    <select class="form-control" id="destinatarioInputID">`;
+    
+    for (const key in posibleUsers) {
+        userForm += `<option>${posibleUsers[key]}</option>`;
+    }    
+    userForm += `</select>
+                      </div>
+                <div class="py-2 form-group">
+                    <label for="amount">Cantidad a enviar:</label>
+                    <input type="text" class="form-control" id="amountID">
+                    </div>
+                <button type="button" class="py-1 btn btn-primary" id="sendButton">Enviar</button>`;
+    sendForm.innerHTML = userForm;
+    sendButton = document.getElementById("sendButton");
+    sendButton.onclick = () => {
+        let destinatarioInput = document.getElementById("destinatarioInputID");
+        destinatario = destinatarioInput.value;
+        let amountInput = document.getElementById("amountID");
+        amount = parseFloat(amountInput.value);
+        TransferFunds(destinatario, amount);
+        PrintAllFunds();
+    }
+    PrintAllFunds();
+
+}
+
+
+
+
 // MAIN
-Welcome();
-let user = prompt("Ingrese su nombre de usuario");
-let pass = prompt("Ingrese su contraseña para el ingreso");
-logged_in = CheckLogIn(user, pass);
+
 while(logged_in){
     SeleccionAccion(prompt("Seleccione la opcion que desea realizar:\n 1.Ver sus fondos\n 2.Enviar fondos a otra dirección\n 3.Graficar fondos\n 4.Salir/Log Off"));
 }
 
 // FUNCTIONS
 
-function Welcome(){
-    alert("Bienvenidos!!!. Ingresar con user:admin y contraseña: pass");
-}
+
 
 function CrearUsuario(_userName, _password, _initialFunds = 0){ //FUNCION PARA CREAR USUARIOS
     if (!users.includes(_userName)){
@@ -76,7 +153,7 @@ function CheckLogIn(_user, _pass){ //LogIn requiere que el usuario se autentique
             successfull = false;
         }
     } else {
-        alert("Ingreso denegado. El usuario <"+ _user + "> no existe");
+        alert("Ingreso denegado. El usuario "+ _user + " no existe");
         successfull = false;
     }
     return successfull
@@ -106,15 +183,15 @@ function GetFunds(){ // obtiene valores de una API
         alert("Usted posee " + users[activeUserId].funds + "ETH y " + weth.balanceOf(activeUserId) + "WETH");       
 }
 
-function TransferFunds(){ // pide los datos para trasnferencia de fondos
+function TransferFunds(_transferTo, _transferAmount){ // pide los datos para trasnferencia de fondos
     let posibleUsers = users.map(el => el.id);
     posibleUsers = posibleUsers.filter(el => el != activeUserId);
-    let transferTo = prompt("Seleccionar el ID del destinatario. Posible/s destinatarios:\n" + posibleUsers);
-    if (posibleUsers.some(el => el == transferTo)){
-        let transferAmount = parseFloat(prompt("Seleccionar el monto a enviar (max:" + users[activeUserId].funds + "ETH)"));
-        if (transferAmount <= users[activeUserId].funds){
-            TransferTo(activeUserId, transferTo, transferAmount);
-            GetFunds();
+    
+    if (posibleUsers.some(el => el == _transferTo)){
+        
+        if (_transferAmount <= users[activeUserId].funds){
+            TransferTo(activeUserId, _transferTo, _transferAmount);
+            
         } else {
             alert("El monto elegido supera al disponible");
         }
@@ -143,17 +220,19 @@ function PrintAllFunds(){ // DOM - lista los fondos de todos los usuarios en una
     // Creacion de grafico de linea. Por el momento estático, proximas entregas se añadiran valores reales de fondos y se agregaràn mas graficos (ahora comentados)
     //let chartElement = document.getElementById("myChart");
     //chartElement.className = "w-100";
-    //drawFundsChart(["January", "February", "March", "April", "May", "June"], [0, 10, 5, 2, 20, 30, 45],"Grafico 1",chartElement);
+    //drawFundsChart(["January", "February", "March", "April", "May", "June"], [0, 10, 5, 2, 20, 30, 45],"Grafico 1",canvas);
     // Creacion de grafico de torta. Por el momento estático, proximas entregas se añadirán valores reales de fondos
-    chartElement = document.getElementById("myChart");
-    chartElement.className = "w-100";
+    chartSection = document.getElementById("chartSection");
+    chartSection.innerHTML = `<canvas id="myChart"></canvas>`;
+    myChart = document.getElementById("myChart"); 
+
     // Calculo de valores
     let referencia = users.map((el)=> el.userName);
     let valores = users.map((el)=> el.funds);
     let valorTotal = valores.reduce((acumulador,el)=> acumulador + el,0);
     valores = valores.map((el)=> el/valorTotal*100);
 
-    drawDoughnutChart(referencia, valores ,"Grafico 2", chartElement);
+    drawDoughnutChart(referencia, valores ,"Grafico 2", myChart);
     logged_in = false; //Desloguea para poder hacer el grafico
 }
 
@@ -183,7 +262,8 @@ function drawFundsChart(_labels, _data, _title = "My First dataset", _element) {
 }
 
 function drawDoughnutChart(_labels, _data, _title = "My First dataset", _element) {//Funcion grafico de donut. Necesaria las etiquetas, datos, titulo y elemento de HTML
-  const data = {
+
+    const data = {
     labels: _labels,
     datasets: [
       {
@@ -205,5 +285,8 @@ function drawDoughnutChart(_labels, _data, _title = "My First dataset", _element
         scale: 0.5,
     },
   };
-  const myChart2 = new Chart(_element, config);
+
+    return new Chart(_element, config);
+  
+  
 }
