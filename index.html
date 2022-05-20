@@ -14,39 +14,66 @@
         <meta name="keywords" content="eth, weth, gestor">
     
         <!-- CSS File -->
-       
+        <link rel="stylesheet" href="css/style.css">
         <!-- Add icon library -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <!-- Add scripts CDN -->
+        <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/luxon@2.4.0/build/global/luxon.min.js"></script>
     </head>
-<body class="d-flex flex-column align-items-center">
+<body class="d-flex flex-column align-items-center justify-content-center">
     <header class= "d-flex flex-column">
         
         <!-- Fin bootstrap navbar -->
     </header>
-    <main class="mt-5 d-flex flex-column" id="mainID">
-        <h1 id="mainTitleID">CryptoJS</h1>
-        <p id="mainTextID">Logearse con "admin" + "pass" para modo administrador</p>
-
+    <main class="p-1 d-flex flex-column w-100 justify-content-center align-items-center" id="mainID">
+        <h1 id="mainTitleID" class="text-center">CryptoJS</h1>
+                
         <form id="loginFormID">
             
         </form>
         
-        <div id="fundSection">
+        <div class="container mainFunds">
+            <div class="row">
+              <div class="col-8">
+                <p id="mainTextID"></p>
+                <div id="fundSection">
 
-        </div>
-
-        <div id="sendFormID">
+                </div>
+        
+                <div id="sendFormID">
+                    
+                </div>
+                
+              </div>
+              <div class="col-4">
+                <div id="chartSection" class="p-3 d-flex flex-column justify-content-center align-items-center w-100">
+                    <canvas id="myChart">
             
-        </div>
-        <div id="chartSection" class="p-3 d-flex flex-column justify-content-center align-items-center w-100">
-            <canvas id="myChart">
-    
-            </canvas>
-            
-        </div>
-        <div id="logOutButton">
+                    </canvas>
+                    
+                </div>
+              </div>
+              
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div id="plot"></div>
+                </div>
+            </div>
+            <div id="logOutButton" class="mt-3">
 
-        </div>
+            </div>
+            
+
+          </div>
+        
+        
+        
+        
     </main>
     
     

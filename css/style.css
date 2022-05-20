@@ -1,0 +1,20 @@
+#mainTitleID{
+    margin: 2rem;
+}
+
+#loginFormID{
+    display: flex;
+    flex-direction: column;
+    width: 75%;
+    justify-content: center;
+    align-items: center;
+}
+
+.innerForm{
+    width: 50%;
+}
+
+.mainFunds{
+    justify-content: space-between;
+    align-items: center;
+}

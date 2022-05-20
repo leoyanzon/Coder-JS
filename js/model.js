@@ -1,9 +1,11 @@
-//Declaraciones de Variables Generales
+//Declaraciones de Variables Globales
 let logged_in = false;
 let activeUserId;
 let canvas;
 let user;
 let posibleUsers;
+let transactions = [];
+const DateTime = luxon.DateTime;
 
 // DEFINICION DE CLASE ERC20, imitando los tokens en solidity
 // Y CREACION DEL CONTRATO ERC20 WETH.
@@ -55,7 +57,7 @@ function CrearUsuario(_userName, _password, _initialFunds = 0) {
   }
 }
 
-// VERIFICA SI HAY FONDOS; SI NO LOS HAY LOS CREA
+// VERIFICA SI HAY USUARIOS Y FONDOS; SI NO LOS HAY LOS CREA
 users = JSON.parse(localStorage.getItem("users"));
 if (users == null) {
   users = [];
@@ -64,4 +66,36 @@ if (users == null) {
   CrearUsuario("user2", "pass2", 10); //Creo usuario 2, sin fondos
   const usersJSON = JSON.stringify(users);
   localStorage.setItem("users", usersJSON); //guardo usuarios en localStorage
+}
+
+// VERIFICA SESION ABIERTA
+logged_in = localStorage.getItem("logged_in");
+activeUserId = localStorage.getItem("activeUserId");
+activeSession = JSON.parse(localStorage.getItem("activeSession")) || null;
+if (activeSession == null) {
+  activeSession = {
+    logged_in: false,
+    activeUserId: null,
+    activeUserName: null
+  }
+}
+transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+transactions = transactions.length > 0 ? TransformDates(transactions) : transactions;
+
+// Transforma Strings de Fechas en DATES del JSON
+function TransformDates(_transactions){
+    for (const prop of _transactions){
+      prop.date = new Date(Date.parse(prop.date));
+    }
+  return _transactions
+}
+  
+// GUARDA SESION Y TX
+function SaveSession(_activeSession){
+  localStorage.setItem("activeSession", JSON.stringify(activeSession));
+ 
+}
+
+function SaveTx(_transactions){
+  localStorage.setItem("transactions", JSON.stringify(_transactions));
 }
