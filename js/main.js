@@ -25,8 +25,9 @@ function LogIn(_userName){
   SaveSession(activeSession);
   posibleUsers = users.filter((el) => el.id != activeSession.activeUserId);
   LoggedInView(posibleUsers);
-  PrintAllFunds(users, activeSession);
-}
+  PrintAllFunds(users,activeSession);
+  PrintCharts(users,activeSession);
+} 
 
 // Funcion para obtener el ID del usuario segun el nombre
 function GetID(_userName){
@@ -54,6 +55,7 @@ function TransferFunds(_transferTo, _transferAmount) {
     TransferTo(activeSession.activeUserId, _transferTo, _transferAmount);
     SweetAlert("La transacción ha sido exitosa", "success");
     PrintAllFunds(users, activeSession);
+    PrintCharts(users,activeSession);
     const usersJSON = JSON.stringify(users);
     localStorage.setItem("users", usersJSON); //guardo usuarios en localStorage
     document.getElementById("amountID").value = ""

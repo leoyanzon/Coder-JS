@@ -72,14 +72,15 @@ function PrintAllFunds(_users, _activeSession) {
   fundSection.innerHTML = "";
   for (const user in _users) {
     let parrafo = document.createElement("li");
-    parrafo.innerHTML = `${_users[user].userName}: ${_users[user].funds} ETH`;
+    price_usd = price_usd || 0;
+    let amount_usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(_users[user].funds * price_usd.toFixed());
+    parrafo.innerHTML = `${_users[user].userName}: ${_users[user].funds} ETH - (${amount_usd})`;
     parrafo.className = _activeSession.activeUserId == user ? "list-group-item active" : "list-group-item";    
     fundSection.appendChild(parrafo);
   }
-  // Creacion de grafico de linea. Por el momento estático, proximas entregas se añadiran valores reales de fondos y se agregaràn mas graficos (ahora comentados)
-  //let chartElement = document.getElementById("myChart");
-  //chartElement.className = "w-100";
-  //drawFundsChart(["January", "February", "March", "April", "May", "June"], [0, 10, 5, 2, 20, 30, 45],"Grafico 1",canvas);
+}
+
+function PrintCharts(_users, _activeSession){
   // Creacion de grafico de torta. Por el momento estático, proximas entregas se añadirán valores reales de fondos
   chartSection = document.getElementById("chartSection");
   chartSection.innerHTML = `<canvas id="myChart"></canvas>`;
@@ -95,6 +96,7 @@ function PrintAllFunds(_users, _activeSession) {
   TransactionsDraw(transactions);
 }
 
+setInterval(()=> GetPrice(),5000);
 
 //FUNCION PARA GRAFICAR FONDOS
 function drawFundsChart(_labels, _data, _title = "My First dataset", _element) {

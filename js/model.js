@@ -6,6 +6,8 @@ let user;
 let posibleUsers;
 let transactions = [];
 const DateTime = luxon.DateTime;
+let price_usd;
+let price_ars;
 
 // DEFINICION DE CLASE ERC20, imitando los tokens en solidity
 // Y CREACION DEL CONTRATO ERC20 WETH.
