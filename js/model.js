@@ -1,6 +1,4 @@
 //Declaraciones de Variables Globales
-let logged_in = false;
-let activeUserId;
 let canvas;
 let user;
 let posibleUsers;
@@ -71,8 +69,6 @@ if (users == null) {
 }
 
 // VERIFICA SESION ABIERTA
-logged_in = localStorage.getItem("logged_in");
-activeUserId = localStorage.getItem("activeUserId");
 activeSession = JSON.parse(localStorage.getItem("activeSession")) || null;
 if (activeSession == null) {
   activeSession = {

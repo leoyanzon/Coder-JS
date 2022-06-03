@@ -3,6 +3,8 @@ let loginForm = document.getElementById("loginFormID");
 let mainTitle = document.getElementById("mainTitleID");
 let mainText = document.getElementById("mainTextID");
 let sendForm = document.getElementById("sendFormID");
+let userFunds = document.getElementById("userFunds");
+let dolarFunds = document.getElementById("dolarFunds");
 let userName;
 let password;
 let loginButton;
@@ -12,7 +14,7 @@ let sendButton = "";
 
 // FUNCION PARA GRAFICAR EL MENU LOG IN
 function LogInView() {
-  loginForm.innerHTML = `<p>Logearse con "admin" + "pass" para modo administrador</p>
+  loginForm.innerHTML = `<p>Loguearse con cualquiera de los siguientes pares: "admin+pass" ó "user1+pass1" ó "user2+pass2"</p>
                           <div class="mb-3 innerForm">
                             <label for="userName" class="form-label">Nombre de usuario</label>
                             <input type="text" class="form-control" id="userName" aria-describedby="userHelp">
@@ -61,7 +63,8 @@ function LoggedOutView(){
 	mainText.innerHTML = "";
 	sendForm.innerHTML = "";
 	logOutButton.innerHTML = "";
-	fundSection.innerHTML = "";
+	userFunds.innerHTML = "";
+  dolarFunds.innerHTML = "";
 	chartSection.innerHTML = "";
   document.getElementById("plot").innerHTML = "";
 }
@@ -69,16 +72,39 @@ function LoggedOutView(){
 function PrintAllFunds(_users, _activeSession) {
   // DOM - lista los fondos de todos los usuarios en una lista
   let fundSection = document.getElementById("fundSection");
-  fundSection.innerHTML = "";
+
+  fundSection.className = "fundColumns"
+  userFunds.innerHTML = ""
+  dolarFunds.innerHTML = ""
+  //fundSection.innerHTML = "";
   for (const user in _users) {
-    let parrafo = document.createElement("li");
-    price_usd = price_usd || 0;
-    let amount_usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(_users[user].funds * price_usd.toFixed());
-    parrafo.innerHTML = `${_users[user].userName}: ${_users[user].funds} ETH - (${amount_usd})`;
-    parrafo.className = _activeSession.activeUserId == user ? "list-group-item active" : "list-group-item";    
-    fundSection.appendChild(parrafo);
+    let _userFund = document.createElement("li");
+    _userFund.innerHTML = `${_users[user].userName}: ${_users[user].funds} ETH`;
+    _userFund.className = _activeSession.activeUserId == user ? "list-group-item active" : "list-group-item";    
+    userFunds.appendChild(_userFund);
   }
+
+  price_usd = price_usd || 0;
+  if (price_usd == 0){
+    dolarFunds.innerHTML = `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
+  } else {
+    dolarFunds.innerHTML = ""
+    for (const user in _users) {
+      let _dolarFund = document.createElement("li");
+      let amount_usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(_users[user].funds * price_usd.toFixed());
+      _dolarFund.innerHTML = `${amount_usd}`;
+      _dolarFund.className = _activeSession.activeUserId == user ? "list-group-item active" : "list-group-item";
+      dolarFunds.appendChild(_dolarFund);
+    }
+        
+    
+  }
+  
+  
 }
+
+
+
 
 function PrintCharts(_users, _activeSession){
   // Creacion de grafico de torta. Por el momento estático, proximas entregas se añadirán valores reales de fondos
@@ -96,7 +122,7 @@ function PrintCharts(_users, _activeSession){
   TransactionsDraw(transactions);
 }
 
-setInterval(()=> GetPrice(),5000);
+
 
 //FUNCION PARA GRAFICAR FONDOS
 function drawFundsChart(_labels, _data, _title = "My First dataset", _element) {

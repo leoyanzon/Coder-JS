@@ -1,3 +1,7 @@
+body{
+  background: linear-gradient(to left, lightblue, lightskyblue);
+}
+
 #mainTitleID{
     margin: 2rem;
 }
@@ -18,3 +22,67 @@
     justify-content: space-between;
     align-items: center;
 }
+
+.fundColumns{
+    display: flex;
+    flex-direction: row;
+}
+
+#userFunds{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+}
+#userFunds li{
+    width: 100%;
+}
+
+#dolarFunds{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+}
+#dolarFunds li{
+    width: 100%;
+}
+
+.lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    margin: 5px;
+    border: 8px solid lightblue;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: darkblue transparent transparent transparent;
+  }
+  .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  .lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  

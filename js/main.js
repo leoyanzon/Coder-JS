@@ -37,7 +37,9 @@ function GetID(_userName){
 // Funcion para logout
 function LogOut() {
   localStorage.removeItem("activeSession");
-  activeSession = null;
+  activeSession = {
+    logged_in: false
+  };
   LoggedOutView();
   LogInView();
 }

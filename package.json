@@ -1,0 +1,23 @@
+{
+  "name": "coder-js",
+  "version": "1.0.0",
+  "description": "Coderhouse Javascript",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leoyanzon/Coder-JS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leoyanzon/Coder-JS/issues"
+  },
+  "homepage": "https://github.com/leoyanzon/Coder-JS#readme",
+  "dependencies": {
+    "bootstrap": "^5.1.3",
+    "luxon": "^2.4.0"
+  }
+}
